@@ -1,0 +1,38 @@
+import React from 'react';
+import { Route, Redirect } from 'react-router-dom';
+
+const ProtectedRoute = ({ component: Component, role, requiredRole, ...rest }) => {
+  if (role !== requiredRole) {
+    // Redirect to login or an error page if the user does not have the required role
+    return <Redirect to="/login" />;
+  }
+
+  // Render the protected component if the user has the required role
+  return <Route {...rest} render={(props) => <Component {...props} />} />;
+};
+
+export default ProtectedRoute;
+
+
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import ProtectedRoute from './ProtectedRoute';
+import AdminDashboard from './AdminDashboard';
+import UserDashboard from './UserDashboard';
+import LoginPage from './LoginPage';
+
+const App = () => {
+  const [role, setRole] = useState('admin'); // Example role
+  
+  return (
+    <Router>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <ProtectedRoute path="/admin-dashboard" element={<AdminDashboard />} role={role} requiredRole="admin" />
+        <ProtectedRoute path="/user-dashboard" element={<UserDashboard />} role={role} requiredRole="user" />
+      </Routes>
+    </Router>
+  );
+};
+
+export default App;

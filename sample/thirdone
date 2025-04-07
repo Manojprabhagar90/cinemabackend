@@ -1,0 +1,2 @@
+pipeline:[{}]
+pipeline: [ { '$match': { showdatetime: { '$gte': 2025-04-03T19:24:18.000Z } } } ],

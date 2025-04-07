@@ -1,0 +1,18 @@
+{
+  "_id": ObjectId("..."),
+  "movieId": ObjectId("movieA_id"),  // reference to the movie in the movies collection
+  "showtime": ISODate("2025-03-28T19:00:00Z"),
+  "availableSeats": 100
+},
+{
+  "_id": ObjectId("..."),
+  "movieId": ObjectId("movieA_id"),  // reference to the movie in the movies collection
+  "showtime": ISODate("2025-03-28T21:00:00Z"),
+  "availableSeats": 100
+},
+{
+  "_id": ObjectId("..."),
+  "movieId": ObjectId("movieB_id"),
+  "showtime": ISODate("2025-03-28T18:00:00Z"),
+  "availableSeats": 50
+}

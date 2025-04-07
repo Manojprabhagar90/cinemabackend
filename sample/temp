@@ -1,0 +1,57 @@
+db.bookings.aggregate([
+    {
+        $lookup : {
+            from : 'shows',
+            localField : 'showID',
+            foreignField : '_id',
+            as : 'shows'
+        }
+    },{
+        $unwind : '$shows'
+    },{
+        $lookup : {
+            from : "movies",
+            localField : "shows.movie_id",
+            foreignField : '_id',
+            as : 'movies'
+        }
+    },{
+        $unwind : '$movies'
+    },
+    {
+        $lookup : {
+            from : 'Screens',
+            localField : 'shows.screen_id',
+            foreignField : '_id',
+            as : 'screens'
+        }
+    },
+    {
+        $unwind : '$screens'
+    },
+    {
+        $lookup : {
+            from : 'Theaters',
+            localField : 'screens.theater_id',
+            foreignField : '_id',
+            as : 'theaters'
+        }
+    },
+    {
+        $unwind : '$theaters'
+    },
+    {
+        $match : {
+            user_id : ObjectId('67efb87c047a2c4dc8ebcecd') 
+        }
+    },
+    {
+        $group :{
+            _id: "$_id",
+            theater_name : { $first : "$theaters.theater_name"} ,
+            screen_name : { $first : "$screens.screen_name"}   ,
+            bookedSeats : { $first : "$bookedSeats"} ,
+            showdatetime : { $first : "$shows.showdatetime"} ,
+        }
+    }
+])

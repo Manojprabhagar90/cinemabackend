@@ -1,0 +1,48 @@
+db.Theaters.aggregate([
+  {
+    $lookup: {
+      from: "Screens",             
+      localField: "_id",           
+      foreignField: "theater_id",     
+      as: "screens"                 
+    }
+  },
+  {
+   
+    $unwind: "$screens"
+  },
+  {
+    
+    $lookup: {
+      from: "shows",                
+      localField: "screens._id",    
+      foreignField: "screen_id",     
+      as: "shows"                   
+    }
+  },
+  {
+    
+    $unwind: "$shows"
+  },
+  {
+    
+    $match: {
+      "shows.movie_id": ObjectId('67e826e73c90c876c0f0d764')  
+    }
+  },
+  {
+   
+    $group: {
+      _id: "$_id",                  
+      name: { $first: "$theater_name" },     
+      location: { $first: "$city" },
+      screens: { $push: "$screens" } 
+    }
+  }
+])
+
+, // Replace with the movieId you are looking for
+      "shows.showdatetime": {
+        $gte: new Date("<START_DATE>"),  // Start date (e.g., "2025-03-26T00:00:00Z")
+        $lt: new Date("<END_DATE>")      // End date (e.g., "2025-03-27T00:00:00Z")
+      }

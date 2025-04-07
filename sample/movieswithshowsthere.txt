@@ -1,0 +1,68 @@
+how to get movies which has shows in show collection which are the release data is less than today date in theater collection in mongodb
+
+const today = new Date();  // Get today's date
+
+db.movies.aggregate([
+  {
+    // Join Movies collection with Shows collection using the movie_id reference
+    $lookup: {
+      from: "shows",  // Name of the Shows collection
+      localField: "_id",  // Movie's _id field
+      foreignField: "movie_id",  // Show's movie_id field
+      as: "showings"  // Resulting field with matching shows
+    }
+  },
+  {
+    // Filter for movies where the release_date is before today's date
+    $match: {
+      release_date: { $lt: today },  // Release date is less than today's date
+      "showings.0": { $exists: true }  // Ensure there is at least one associated show
+    }
+  },
+  {
+    // Optional: You can project to return only necessary fields
+    $project: {
+      movie_name: 1,
+      release_date: 1,
+      showings: 1  // You can include or exclude showings data
+    }
+  }
+])
+
+
+
+const mongoose = require('mongoose');
+const Movie = mongoose.model('Movie'); // Assuming Movie is a Mongoose model
+const Show = mongoose.model('Show');   // Assuming Show is a Mongoose model
+
+const getMoviesWithShows = async () => {
+  const today = new Date(); // Get today's date
+
+  const movies = await Movie.aggregate([
+    {
+      $lookup: {
+        from: 'shows',
+        localField: '_id',
+        foreignField: 'movie_id',
+        as: 'showings'
+      }
+    },
+    {
+      $match: {
+        release_date: { $lt: today },
+        'showings.0': { $exists: true } // Ensure there's at least one show
+      }
+    },
+    {
+      $project: {
+        movie_name: 1,
+        release_date: 1,
+        showings: 1
+      }
+    }
+  ]);
+
+  console.log(movies);
+};
+
+getMoviesWithShows();

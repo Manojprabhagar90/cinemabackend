@@ -1,0 +1,8 @@
+const jf = async() =>{
+      const response = await cityServices.getAllcity();
+      console.log(response.data);
+    }
+    useEffect(()=>{
+     
+      jf();
+    },[])

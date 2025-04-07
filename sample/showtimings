@@ -1,0 +1,44 @@
+const mongoose = require('mongoose');
+
+// Function to get all show timings for a specific theater
+const getShowTimingsForTheater = async (theaterId) => {
+  try {
+    // Step 1: Find all screens for the given theater
+    const screens = await Screen.find({ theaterId });
+
+    // Step 2: Find all ScreenData entries for the screens
+    const screenIds = screens.map(screen => screen._id);
+
+    // Step 3: Fetch all the show timings (ScreenData) for the screens
+    const screenData = await ScreenData.find({ screenId: { $in: screenIds } })
+      .populate('screenId', 'screenName');  // Populate screen name if needed
+
+    // Step 4: Extract and return the show timings
+    const allShowTimings = screenData.map(data => ({
+      screenName: data.screenId.screenName,  // Get the screen name from the populated field
+      showTimings: data.showTimings
+    }));
+
+    console.log(allShowTimings);
+    return allShowTimings;
+  } catch (error) {
+    console.error('Error fetching show timings:', error);
+  }
+};
+
+// Example usage: Pass in the theater ID
+const theaterId = '60c72b2f9b1d8c1afbfedbe8'; // Replace with the actual theater ObjectId
+getShowTimingsForTheater(theaterId);
+
+db.collection.aggregate([
+  {
+    $project: {
+      time: {
+        $dateToString: {
+          format: "%I:%M:%S %p",  // 12-hour format with AM/PM
+          date: "$yourDateField"
+        }
+      }
+    }
+  }
+])

@@ -1,0 +1,65 @@
+
+db.Theaters.aggregate([
+  {
+    
+    $lookup: {
+      from: "Screens",              
+      localField: "_id",              
+      foreignField: "theater_id",    
+      as: "screens"                 
+    }
+  },
+  {
+    $unwind: "$screens"
+  },
+  {
+    
+    $lookup: {
+      from: "shows",                
+      localField: "screens._id",     
+      foreignField: "screen_id",    
+      as: "shows"                   
+    }
+  },
+  {
+    
+    $match: {
+      "shows.movie_id": ObjectId('67e826e73c90c876c0f0d764'), 
+      
+    }
+  },
+  {
+    
+    $project: {
+      _id: 1,                         // Theater ID
+      theater_name: 1,                         // Theater name
+      city: 1,                     // Theater location
+      screen_id: "$screens._id",       // Screen ID
+      screen_name: "$screens.screen_name",    // Screen name
+      showtimes: {                    
+          $map: {
+            input: "$shows",             
+            as: "show",                 
+            in: {                        
+              showId: "$$show._id",      
+              showdatetime: "$$show.showdatetime" 
+            }
+          }
+        }  // Showtimes (showdatetime)
+    }
+  },
+  {
+    // Step 6: Group by theater_id to get the theaters with all screens and showtimes for the movie
+    $group: {
+      _id: "$_id",                     // Group by theater ID
+      name: { $first: "$theater_name" },        // Include the theater name
+      screens: {                        // Push the screens and showtimes into an array
+        $push: {
+          screen_id: "$screen_id",
+          screen_name: "$screen_name",
+          showtimes: "$showtimes"
+        }
+      }
+    }
+  }
+])

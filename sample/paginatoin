@@ -1,0 +1,141 @@
+import React from 'react';
+import { useTable, usePagination } from 'react-table';
+
+const Theater = () => {
+  // Sample data
+  const data = React.useMemo(
+    () => [
+      { name: 'John Doe', age: 28, email: 'john@example.com' },
+      { name: 'Jane Smith', age: 22, email: 'jane@example.com' },
+      { name: 'Tom Green', age: 32, email: 'tom@example.com' },
+      { name: 'Lucy Blue', age: 25, email: 'lucy@example.com' },
+      { name: 'Jack White', age: 30, email: 'jack@example.com' },
+      { name: 'Olivia Brown', age: 27, email: 'olivia@example.com' },
+      { name: 'Michael Black', age: 35, email: 'michael@example.com' },
+      { name: 'Sophia White', age: 24, email: 'sophia@example.com' },
+      { name: 'Liam Gray', age: 29, email: 'liam@example.com' },
+      { name: 'Emma Purple', age: 26, email: 'emma@example.com' },
+    ],
+    []
+  );
+
+  // Columns definition
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: 'Name',
+        accessor: 'name',
+      },
+      {
+        Header: 'Age',
+        accessor: 'age',
+      },
+      {
+        Header: 'Email',
+        accessor: 'email',
+      },
+    ],
+    []
+  );
+
+  // Use the table and pagination hooks
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+    state: { pageIndex, pageSize },
+    canPreviousPage,
+    canNextPage,
+    pageCount,
+    gotoPage,
+    previousPage,
+    nextPage,
+    setPageSize,
+  } = useTable(
+    {
+      columns,
+      data,
+      initialState: { pageIndex: 0 }, // Start from the first page
+    },
+    usePagination
+  );
+
+  return (
+    <div className="table-container">
+      <table {...getTableProps()} className="table-auto w-full border-collapse">
+        <thead>
+          {headerGroups.map(headerGroup => (
+            <tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map(column => (
+                <th
+                  {...column.getHeaderProps()}
+                  className="py-2 px-4 border-b bg-gray-100 text-left"
+                >
+                  {column.render('Header')}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody {...getTableBodyProps()}>
+          {rows.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize).map(row => {
+            prepareRow(row);
+            return (
+              <tr {...row.getRowProps()} className="hover:bg-gray-50">
+                {row.cells.map(cell => (
+                  <td
+                    {...cell.getCellProps()}
+                    className="py-2 px-4 border-b text-sm text-gray-700"
+                  >
+                    {cell.render('Cell')}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+
+      {/* Pagination Controls */}
+      <div className="pagination mt-4 flex justify-between items-center">
+        <button
+          onClick={() => previousPage()}
+          disabled={!canPreviousPage}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md"
+        >
+          Previous
+        </button>
+        <span>
+          Page{' '}
+          <strong>
+            {pageIndex + 1} of {pageCount}
+          </strong>{' '}
+        </span>
+        <button
+          onClick={() => nextPage()}
+          disabled={!canNextPage}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md"
+        >
+          Next
+        </button>
+
+        {/* Change page size */}
+        <select
+          value={pageSize}
+          onChange={e => setPageSize(Number(e.target.value))}
+          className="px-4 py-2 border rounded-md"
+        >
+          {[5, 10, 20].map(size => (
+            <option key={size} value={size}>
+              Show {size}
+            </option>
+          ))}
+        </select>
+      </div>
+    </div>
+  );
+};
+
+export default Theater;

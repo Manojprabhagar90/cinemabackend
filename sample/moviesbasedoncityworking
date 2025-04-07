@@ -1,0 +1,71 @@
+movies.aggregate([
+
+     {
+                      
+                      $lookup: {
+                        from: "shows",                
+                        localField: "_id",     
+                        foreignField: "movie_id", 
+                        pipeline: [
+                          {
+                            $match: {
+                              "showdatetime": {
+                                $gte: new Date('2025-04-03T19:24:18.000Z') 
+                                   
+                              }
+                              
+                            }
+                          }
+                        ],   
+                        as: "shows"                   
+                      }
+                    },
+                    {
+                      $unwind: "$shows"
+                    },
+                    {
+                      
+                      $lookup: {
+                        from: "Screens",              
+                        localField: "shows.screen_id",              
+                        foreignField: "_id",    
+                        as: "screens"                 
+                      }
+                    },
+                    {
+                      $unwind: "$screens"
+                    },
+                    {
+                      
+                      $lookup: {
+                        from: "Theaters",              
+                        localField: "screens.theater_id",              
+                        foreignField: "_id",    
+                        as: "theaters"                 
+                      }
+                    },
+                    {
+                      $unwind: "$theaters"
+                    },
+                   
+                    {
+                      
+                      $match: {
+                        "theaters.city": 'Chennai'
+                        
+                      }
+                    },
+                    {
+                      // Step 6: Group by theater_id to get the theaters with all screens and showtimes for the movie
+                      $group: {
+                        _id: "$_id",                     // Group by theater ID
+                        title: { $first: "$title" },  
+                        runtime: { $first: "$runtime" }, 
+                        releasedate: { $first: "$releasedate" }, 
+                        posterimg: { $first: "$posterimg" }, 
+                        languages: { $first: "$languages" }, 
+                        genres: { $first: "$genres" }
+                        
+                      }
+                    }
+                  ])
