@@ -18,7 +18,7 @@ bookingRouter = express.Router();
             })
 
 bookingRouter.get('/:reqshowId',bookingController.getAllBookedSeats);
-bookingRouter.post('/add',bookingController.addBookings);
+bookingRouter.post('/add',upload.single('file'),bookingController.addBookings);
 bookingRouter.get('/tickets/:requserId',bookingController.getAllBookedTicketsbyUser);
-bookingRouter.put('/:booking_id',bookingController.updateBookings);
+bookingRouter.put('/:booking_id',upload.single('file'),bookingController.updateBookings);
 module.exports = bookingRouter;
