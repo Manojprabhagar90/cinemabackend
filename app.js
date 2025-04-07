@@ -15,7 +15,7 @@ const showRouter = require("./routes/showRoutes");
 
 const app = express();
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'https://brilliant-dragon-74ea70.netlify.app',
     credentials: true
 }));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
