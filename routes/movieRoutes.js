@@ -17,6 +17,7 @@ const upload = multer({
     storage : storage
 })
 
+movieRouter.get('/getallmovie',movieControllers.getAllMovie);
 movieRouter.get('/getallmovie/:city/:reqdate',movieControllers.getAll);
 movieRouter.post('/add',upload.single('file'),movieControllers.addMovie);
 
