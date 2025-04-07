@@ -2,6 +2,10 @@ const Movie = require("../models/movieModel")
 const mongoose = require('mongoose');
 
 const movieControllers = {
+    getAllMovie : async(request,response) =>{
+              const movies = await Movie.find();
+              response.status(200).json(movies);
+    },
     getAll : async(request,response) =>{
         const {city,reqdate} = request.params;
                 let checkdate = new Date(reqdate)
