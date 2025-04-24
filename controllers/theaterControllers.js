@@ -49,7 +49,7 @@ const theaterControllers = {
         },
         getTheaterbymovieid : async(request,response)=>{
             try {
-                const {reqmovieId,reqdate,selectedcity} = request.params;
+                const {reqmovieId,reqdate} = request.params;
                 
                 let checkdate = new Date(reqdate)
                 checkdate.setHours(checkdate.getHours()+5);
@@ -92,17 +92,15 @@ const theaterControllers = {
                               }
                               
                             }
-                          } 
+                          }
                         ],   
                         as: "shows"                   
                       }
                     },
-                    { $sort: { "shows.showdatetime": 1 } },
                     {
                       
                       $match: {
-                        "shows.movie_id": objectId,
-                        "city" : selectedcity
+                        "shows.movie_id": objectId
                         
                       }
                     },
@@ -127,7 +125,7 @@ const theaterControllers = {
                       }
                     },
                     {
-                      
+                      // Step 6: Group by theater_id to get the theaters with all screens and showtimes for the movie
                       $group: {
                         _id: "$_id",                     // Group by theater ID
                         name: { $first: "$theater_name" },  

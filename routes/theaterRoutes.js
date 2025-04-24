@@ -17,5 +17,5 @@ const upload = multer({
 })
 
 theaterRouter.post('/add',upload.single('file'),theaterControllers.addTheater);
-theaterRouter.get('/:reqmovieId/:reqdate/:selectedcity',theaterControllers.getTheaterbymovieid)
+theaterRouter.get('/:reqmovieId/:reqdate',theaterControllers.getTheaterbymovieid)
 module.exports = theaterRouter;
